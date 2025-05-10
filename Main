@@ -113,7 +113,7 @@ local Input2 = Tab1:CreateInput({
 	RemoveTextAfterFocusLost = false,
 	Flag = "Input231",
 	Callback = function(Text)
-		game.Players:WaitForChild(Text):Kick("Your a nigger frfr")
+		game.Players:WaitForChild(Text):Kick("Your a bitch frfr")
 	end 
 })
 
