@@ -83,7 +83,8 @@ local Toggle = Tab1:CreateToggle({
             game.RunService.Stepped:Connect(function()
             game.Players.LocalPlayer.Character.Head.CanCollide = true 
             game.Players.LocalPlayer.Character.Torso.CanCollide = true
-        end)
+        	end)
+   		end
    end
 })
 
