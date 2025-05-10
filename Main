@@ -75,16 +75,16 @@ local Toggle = Tab1:CreateToggle({
    Flag = "Toggle1215", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
    Callback = function(Value)
       if Value == true then
-        game.RunService.Stepped:Connect(function()
+       game:GetService("RunService").RenderStepped:Connect(function()
             game.Players.LocalPlayer.Character.Head.CanCollide = false 
             game.Players.LocalPlayer.Character.Torso.CanCollide = false
         end)
             else
-            game.RunService.Stepped:Connect(function()
-            game.Players.LocalPlayer.Character.Head.CanCollide = true 
-            game.Players.LocalPlayer.Character.Torso.CanCollide = true
-        	end)
-   		end
+         game:GetService("RunService").RenderStepped:Connect(function()
+           	game.Players.LocalPlayer.Character.Head.CanCollide = true 
+            	game.Players.LocalPlayer.Character.Torso.CanCollide = true
+            end)
+   	end
    end
 })
 
