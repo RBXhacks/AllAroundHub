@@ -38,6 +38,7 @@ local Window = Rayfield:CreateWindow({
 local hum = game.Players.LocalPlayer.Character.Humanoid
 
 local Tab = Window:CreateTab("Main", 4483362458) -- Title, Image
+local Tab1 = Window:CreateTab("Misc", 4483362458) -- Title, Image
 
 local Slider = Tab:CreateSlider({
 	Name = "JumpPower",
@@ -74,7 +75,7 @@ local Button = Tab:CreateButton({
 	end
 })
 
-local Input = Tab:CreateInput({
+local Input = Tab1:CreateInput({
 	Name = "Chat",
 	CurrentValue = "",
 	PlaceholderText = "Put text here",
@@ -85,38 +86,48 @@ local Input = Tab:CreateInput({
 		TextChatService.TextChannels.RBXGeneral:SendAsync(Text)
 	end 
 })
+local Input2 = Tab1:CreateInput({
+	Name = "Kick Player",
+	CurrentValue = "",
+	PlaceholderText = "Put text here",
+	RemoveTextAfterFocusLost = false,
+	Flag = "Input231",
+	Callback = function(Text)
+		game.Players:WaitForChild(Text):Kick("Your a nigger frfr")
+	end 
+})
 
 local Dropdown = Tab:CreateDropdown({
-	Name = "Health function",
-	Options = {"Faster Regen","Normal Regen","Risky Regen"},
-	CurrentOption = {"Normal Regen"},
-	MultipleOptions = false,
-	Flag = "yoDropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Options)
+   Name = "Health function",
+   Options = {"Faster Regen","Normal Regen","Risky Regen"},
+   CurrentOption = {"Normal Regen"},
+   MultipleOptions = false,
+   Flag = "yoDropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Options)
 		if Options == "Faster Regen" then
 			hum.HealthChanged:Connect(function(health)
-				if health < hum.MaxHealth then     
-					while wait(.3) do
-						hum.Health += 5
-					end
-				end
-			end)
-		elseif Options == "Risky Regen" then
-			hum.HealthChanged:Connect(function(health)
-				if health < hum.MaxHealth then
-					hum.Health += hum.MaxHealth
-				end
-			end)
-		elseif Options == "Normal Regen" then
-			hum.HealthChanged:Connect(function(health)
-				if health < hum.MaxHealth then
-					while wait(1) do
-						hum.Health += 5
-					end
-				end
-			end)
+                if health < hum.MaxHealth then     
+                   while wait(.3) do
+                    hum.Health += 5
+                    end
+                end
+            end)
+			elseif Options == "Risky Regen" then
+				hum.HealthChanged:Connect(function(health)
+                if health < hum.MaxHealth then
+                    hum.Health += hum.MaxHealth
+                end
+            end)
+			elseif Options == "Normal Regen" then
+				hum.HealthChanged:Connect(function(health)
+                if health < hum.MaxHealth then
+                    while wait(1) do
+                    hum.Health += 5
+                    end
+                end
+            end)
 		end
-	end
+   end
 })
 
 
