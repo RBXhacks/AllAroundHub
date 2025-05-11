@@ -197,7 +197,7 @@ local Dropdown1 = Tab1:CreateDropdown({
                 local closestHead = nil
 
 	for _, player in pairs(Players:GetPlayers()) do
-		if player ~= localPlayer and player.Character then
+		if player ~= localPlayer and player.Character and player.Character.Humanoid.Health >= 0 and player.Team ~= localPlayer.Team then
 			local head = player.Character.HumanoidRootPart
 			local dist = (head.Position - camera.CFrame.Position).Magnitude
 			if dist < closestDist then
@@ -251,7 +251,7 @@ end)
                 local closestHead = nil
 
 	for _, player in pairs(Players:GetPlayers()) do
-		if player ~= localPlayer and player.Character then
+		if player ~= localPlayer and player.Character and player.Character.Humanoid.Health >= 0 and player.Team ~= localPlayer.Team then
 			local head = player.Character.Head
 			local dist = (head.Position - camera.CFrame.Position).Magnitude
 			if dist < closestDist then
