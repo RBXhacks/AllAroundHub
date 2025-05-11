@@ -78,6 +78,7 @@ Tab:CreateToggle({
     end
 })
 
+
 -- Force Remove hacks Button
 Tab:CreateButton({
     Name = "Force Remove hacks",
@@ -87,6 +88,7 @@ Tab:CreateButton({
 })
 
 -- Chat Input
+local Section1 = Tab1:CreateSection("Chat")
 Tab1:CreateInput({
     Name = "Chat",
     CurrentValue = "",
@@ -112,6 +114,7 @@ Tab1:CreateInput({
 })
 
 -- Health Function Dropdown
+local Section1 = Tab:CreateSection("Health")
 Tab:CreateDropdown({
     Name = "Health function",
     Options = {"Faster Regen","Normal Regen","Risky Regen"},
@@ -138,6 +141,7 @@ Tab:CreateDropdown({
 })
 
 -- AimBot Section
+local Section112 = Tab:CreateSection("AimBot")
 local IsAimbotOn = false
 local HitPart = "Torso"
 
@@ -159,38 +163,6 @@ Tab1:CreateDropdown({
     end
 })
 
--- Mouse hover over player detection and event firing logic
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local shootEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("Shoot")
-if shootEvent then
-    print("TriggerBot working")
- else
-    return nil
-end
-
-local UserInputService = game:GetService("UserInputService")
-local mouse = game.Players.LocalPlayer:GetMouse()
-
--- Function to check if mouse is over a player's character
-local function isMouseOverCharacter(character)
-    local mousePosition = mouse.Hit.p
-    local characterPosition = character:WaitForChild("HumanoidRootPart").Position
-    local distance = (mousePosition - characterPosition).Magnitude
-    return distance < math.Huge  -- If mouse is within 10 studs of the player's character
-end
-
--- Fire the "shoot" event if mouse is over a player
-local function tryShootOnPlayer()
-    for _, player in pairs(game.Players:GetPlayers()) do
-        if player ~= game.Players.LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            local character = player.Character
-            if isMouseOverCharacter(character) then
-                shootEvent:FireServer(player)  -- Fire the shoot event on the player
-            end
-        end
-    end
-end
-
 -- Detect when right mouse button is held
 local isHoldingRightClick = false
 UserInputService.InputBegan:Connect(function(input, processed)
@@ -204,12 +176,6 @@ UserInputService.InputEnded:Connect(function(input, processed)
         isHoldingRightClick = false
     end
 end)
-
-game:GetService("RunService").RenderStepped:Connect(function()
-    if isHoldingRightClick == true then
-        tryShootOnPlayer()
-    end
-end)  -- <-- This `end` closes the RenderStepped connection
 
 -- ✅ ESP Section
 local function createESP(player)
@@ -280,6 +246,11 @@ local function setupCharacterESP(player)
         char:WaitForChild("HumanoidRootPart", 5)
         wait(0.5)
         if ESPEnabled then createESP(player) end
+
+        char.Humanoid.Died:Connect(function()
+            wait(3)
+            createESP(game.Players:GetPlayerFromCharacter(char))    
+        end)
     end)
 end
 
@@ -312,4 +283,6 @@ Tab1:CreateToggle({
             disableESP()
         end
     end
-}) 
+})
+
+Rayfield:LoadConfiguration()
