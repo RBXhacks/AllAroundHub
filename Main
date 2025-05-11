@@ -1,6 +1,22 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-local INdeedKey = ""
+--Sigma boy
+
+--Main
+
+game.StarterGui:SetCore("SendNotification",{
+Title = "Loading hacks",
+Text = "Almost done loading"
+Duration = 5
+
+})
+
+wait(4)
+game.StarterGui:SetCore("SendNotification",{
+Title = "Done Loading",
+Text = "Enjoy!!!"
+Duration = 5
+})
 
 local Window = Rayfield:CreateWindow({
     Name = "Victor_Heimdal Hub",
