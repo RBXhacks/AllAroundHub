@@ -201,7 +201,7 @@ local function AimAtPlayer(player)
     if HitPart == "Head" then
         partToAimAt = character:FindFirstChild("Head")
     elseif HitPart == "Torso" then
-        partToAimAt = character:FindFirstChild("Torso") or character:FindFirstChild("UpperTorso") or character:FindFirstChild("LowerTorso")
+        partToAimAt = character:FindFirstChild("HumanoidRootPart")
     end
 
     if partToAimAt then
