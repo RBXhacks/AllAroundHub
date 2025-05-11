@@ -6,22 +6,18 @@ local Window = Rayfield:CreateWindow({
     LoadingTitle = "Rayfield",
     LoadingSubtitle = "Credit: Sirius",
     Theme = "AmberGlow",
-
     DisableRayfieldPrompts = false,
     DisableBuildWarnings = false,
-
     ConfigurationSaving = {
         Enabled = true,
         FolderName = nil,
         FileName = "Big Hub"
     },
-
     Discord = {
         Enabled = false,
         Invite = "noinvitelink",
         RememberJoins = true
     },
-
     KeySystem = true,
     KeySettings = {
         Title = "This legendary script needs key",
@@ -36,13 +32,11 @@ local Window = Rayfield:CreateWindow({
 
 local char = game.Players.LocalPlayer.Character
 local hum = char.Humanoid
-
 local Tab = Window:CreateTab("Main", 4483362458)
 local Tab1 = Window:CreateTab("Misc", 4483362458)
-
 local Section = Tab:CreateSection("Main")
 
--- JumpPower Slider
+-- Add JumpPower Slider
 Tab:CreateSlider({
     Name = "JumpPower",
     Range = {0, 500},
@@ -55,7 +49,7 @@ Tab:CreateSlider({
     end
 })
 
--- WalkSpeed Slider
+-- Add WalkSpeed Slider
 Tab:CreateSlider({
     Name = "WalkSpeed",
     Range = {0, 500},
@@ -68,7 +62,7 @@ Tab:CreateSlider({
     end
 })
 
--- NoClip Toggle
+-- Add NoClip Toggle
 Tab:CreateToggle({
     Name = "NoClip",
     CurrentValue = false,
@@ -91,8 +85,6 @@ Tab:CreateButton({
         Rayfield:Destroy()
     end
 })
-
-Tab1:CreateSection("Chat")
 
 -- Chat Input
 Tab1:CreateInput({
@@ -118,8 +110,6 @@ Tab1:CreateInput({
         game.Players:WaitForChild(Text):Kick("Your a bitch frfr")
     end
 })
-
-Tab:CreateSection("Health")
 
 -- Health Function Dropdown
 Tab:CreateDropdown({
@@ -147,8 +137,7 @@ Tab:CreateDropdown({
     end
 })
 
-local Section4322 = Tab1:CreateSection("AimBot")
-
+-- AimBot Section
 local IsAimbotOn = false
 local HitPart = "Torso"
 
@@ -170,55 +159,40 @@ Tab1:CreateDropdown({
     end
 })
 
-local function usesTeams()
-    for _, player in ipairs(game.Players:GetPlayers()) do
-        if player.Team then return true end
-    end
-    return false
-end
-
-local function isVisible(targetPart)
-    local origin = workspace.CurrentCamera.CFrame.Position
-    local direction = (targetPart.Position - origin)
-    local raycastParams = RaycastParams.new()
-    raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
-    raycastParams.FilterDescendantsInstances = {game.Players.LocalPlayer.Character}
-    raycastParams.IgnoreWater = true
-    local result = workspace:Raycast(origin, direction, raycastParams)
-    return result and result.Instance:IsDescendantOf(targetPart.Parent)
-end
-
-local function isInFOV(part)
-    local screenPoint, onScreen = workspace.CurrentCamera:WorldToViewportPoint(part.Position)
-    return onScreen
-end
-
-local function getNearestPlayerHead()
-    local closestDist = math.huge
-    local closestHead = nil
-    local hasTeams = usesTeams()
-    for _, player in pairs(game.Players:GetPlayers()) do
-        if player ~= game.Players.LocalPlayer and player.Character and player.Character:FindFirstChild(HitPart) then
-            local targetPart = player.Character[HitPart]
-            local humanoid = player.Character:FindFirstChild("Humanoid")
-            if humanoid and humanoid.Health > 0 then
-                local isEnemy = not hasTeams or player.Team ~= game.Players.LocalPlayer.Team
-                if isEnemy and isVisible(targetPart) and isInFOV(targetPart) then
-                    local dist = (targetPart.Position - workspace.CurrentCamera.CFrame.Position).Magnitude
-                    if dist < closestDist then
-                        closestDist = dist
-                        closestHead = targetPart
-                    end
-                end
-            end
-        end
-    end
-    return closestHead
+-- Mouse hover over player detection and event firing logic
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local shootEvent = ReplicatedStorage:WaitForChild("Events"):WaitForChild("Shoot")
+if shootEvent then
+    print("TriggerBot working")
+ else
+    return nil
 end
 
 local UserInputService = game:GetService("UserInputService")
-local isHoldingRightClick = false
+local mouse = game.Players.LocalPlayer:GetMouse()
 
+-- Function to check if mouse is over a player's character
+local function isMouseOverCharacter(character)
+    local mousePosition = mouse.Hit.p
+    local characterPosition = character:WaitForChild("HumanoidRootPart").Position
+    local distance = (mousePosition - characterPosition).Magnitude
+    return distance < math.Huge  -- If mouse is within 10 studs of the player's character
+end
+
+-- Fire the "shoot" event if mouse is over a player
+local function tryShootOnPlayer()
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player ~= game.Players.LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local character = player.Character
+            if isMouseOverCharacter(character) then
+                shootEvent:FireServer(player)  -- Fire the shoot event on the player
+            end
+        end
+    end
+end
+
+-- Detect when right mouse button is held
+local isHoldingRightClick = false
 UserInputService.InputBegan:Connect(function(input, processed)
     if input.UserInputType == Enum.UserInputType.MouseButton2 then
         isHoldingRightClick = true
@@ -232,20 +206,12 @@ UserInputService.InputEnded:Connect(function(input, processed)
 end)
 
 game:GetService("RunService").RenderStepped:Connect(function()
-    if IsAimbotOn and isHoldingRightClick then
-        local targetPart = getNearestPlayerHead()
-        if targetPart then
-            local targetPos = targetPart.Position
-            local camPos = workspace.CurrentCamera.CFrame.Position
-            workspace.CurrentCamera.CFrame = CFrame.new(camPos, targetPos)
-        end
-    end
-end)
+    if isHoldingRightClick == true then
+        tryShootOnPlayer()
+end
+
 
 -- ✅ ESP Section
--- ✅ Advanced ESP Section with Name + Distance and Team Color Highlights
-Tab1:CreateSection("ESP")
-
 local function createESP(player)
     if player == game.Players.LocalPlayer then return end
     if not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then return end
@@ -347,6 +313,3 @@ Tab1:CreateToggle({
         end
     end
 })
-
-
-Rayfield:LoadConfiguration()
