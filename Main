@@ -1,5 +1,7 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
+local INdeedKey = ""
+
 local Window = Rayfield:CreateWindow({
     Name = "Victor_Heimdal Hub",
     Icon = 0,
@@ -26,17 +28,22 @@ local Window = Rayfield:CreateWindow({
         FileName = "Key",
         SaveKey = true,
         GrabKeyFromSite = false,
-        Key = {"ezE","Victor_Heimdal-IsKing","WsbErBøsse"}
+        Key = INdeedKey
     }
 })
 
-local char = game.Players.LocalPlayer.Character
-local hum = char.Humanoid
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local char = LocalPlayer.Character
+local hum = char and char:FindFirstChildOfClass("Humanoid") or nil
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
 local Tab = Window:CreateTab("Main", 4483362458)
 local Tab1 = Window:CreateTab("Misc", 4483362458)
-local Section = Tab:CreateSection("Main")
 
--- Add JumpPower Slider
+Tab:CreateSection("Main")
+
 Tab:CreateSlider({
     Name = "JumpPower",
     Range = {0, 500},
@@ -45,11 +52,10 @@ Tab:CreateSlider({
     CurrentValue = 10,
     Flag = "Slider1",
     Callback = function(Value)
-        hum.JumpPower = Value
+        if hum then hum.JumpPower = Value end
     end
 })
 
--- Add WalkSpeed Slider
 Tab:CreateSlider({
     Name = "WalkSpeed",
     Range = {0, 500},
@@ -58,28 +64,27 @@ Tab:CreateSlider({
     CurrentValue = 10,
     Flag = "Slider2",
     Callback = function(Value)
-        hum.WalkSpeed = Value
+        if hum then hum.WalkSpeed = Value end
     end
 })
 
--- Add NoClip Toggle
 Tab:CreateToggle({
     Name = "NoClip",
     CurrentValue = false,
     Flag = "Toggle1215",
     Callback = function(Value)
-        game:GetService("RunService").RenderStepped:Connect(function()
-            local character = game.Players.LocalPlayer.Character
+        RunService.RenderStepped:Connect(function()
+            local character = LocalPlayer.Character
             if character then
-                character.Head.CanCollide = not Value
-                character.Torso.CanCollide = not Value
+                local head = character:FindFirstChild("Head")
+                local torso = character:FindFirstChild("Torso")
+                if head then head.CanCollide = not Value end
+                if torso then torso.CanCollide = not Value end
             end
         end)
     end
 })
 
-
--- Force Remove hacks Button
 Tab:CreateButton({
     Name = "Force Remove hacks",
     Callback = function()
@@ -87,8 +92,7 @@ Tab:CreateButton({
     end
 })
 
--- Chat Input
-local Section1 = Tab1:CreateSection("Chat")
+Tab1:CreateSection("Chat")
 Tab1:CreateInput({
     Name = "Chat",
     CurrentValue = "",
@@ -101,7 +105,6 @@ Tab1:CreateInput({
     end
 })
 
--- Kick Player Input
 Tab1:CreateInput({
     Name = "Kick Player",
     CurrentValue = "",
@@ -109,15 +112,14 @@ Tab1:CreateInput({
     RemoveTextAfterFocusLost = false,
     Flag = "InputKick",
     Callback = function(Text)
-        game.Players:WaitForChild(Text):Kick("Your a bitch frfr")
+        Players:WaitForChild(Text):Kick("Your a bitch frfr")
     end
 })
 
--- Health Function Dropdown
-local Section1 = Tab:CreateSection("Health")
+Tab:CreateSection("Health")
 Tab:CreateDropdown({
     Name = "Health function",
-    Options = {"Faster Regen","Normal Regen","Risky Regen"},
+    Options = {"Faster Regen", "Normal Regen", "Risky Regen"},
     CurrentOption = {"Normal Regen"},
     MultipleOptions = false,
     Flag = "yoDropdown1",
@@ -125,15 +127,11 @@ Tab:CreateDropdown({
         hum.HealthChanged:Connect(function(health)
             if health < hum.MaxHealth then
                 if Option == "Faster Regen" then
-                    while wait(0.3) do
-                        hum.Health += 5
-                    end
+                    while wait(0.3) do hum.Health += 5 end
                 elseif Option == "Normal Regen" then
-                    while wait(1) do
-                        hum.Health += 5
-                    end
+                    while wait(1) do hum.Health += 5 end
                 elseif Option == "Risky Regen" then
-                    hum.Health += hum.MaxHealth
+                    hum.Health = hum.MaxHealth
                 end
             end
         end)
@@ -141,7 +139,7 @@ Tab:CreateDropdown({
 })
 
 -- AimBot Section
-local Section112 = Tab1:CreateSection("AimBot")
+Tab1:CreateSection("AimBot")
 local IsAimbotOn = false
 local HitPart = "Torso"
 
@@ -163,34 +161,99 @@ Tab1:CreateDropdown({
     end
 })
 
--- Detect when right mouse button is held
 local isHoldingRightClick = false
-UserInputService.InputBegan:Connect(function(input, processed)
+local function GetClosestPlayer()
+    local closestPlayer = nil
+    local shortestDistance = math.huge
+    local mousePos = Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y)
+
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character then
+            local character = player.Character
+            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+            if humanoidRootPart then
+                local screenPos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(humanoidRootPart.Position)
+                local distance = (Vector2.new(screenPos.X, screenPos.Y) - mousePos).Magnitude
+                if onScreen and distance < shortestDistance then
+                    closestPlayer = player
+                    shortestDistance = distance
+                end
+            end
+        end
+    end
+    return closestPlayer
+end
+
+local function IsVisible(targetPart)
+    local camera = workspace.CurrentCamera
+    local ray = Ray.new(camera.CFrame.Position, (targetPart.Position - camera.CFrame.Position).unit * 1000)
+    local hitPart = workspace:FindPartOnRay(ray, LocalPlayer.Character, false, true)
+    
+    return hitPart == targetPart
+end
+
+local function AimAtPlayer(player)
+    local character = player.Character
+    if not character then return end
+	if character.Humanoid.Health == 0 then return  end
+
+    local partToAimAt
+    if HitPart == "Head" then
+        partToAimAt = character:FindFirstChild("Head")
+    elseif HitPart == "Torso" then
+        partToAimAt = character:FindFirstChild("Torso") or character:FindFirstChild("UpperTorso") or character:FindFirstChild("LowerTorso")
+    end
+
+    if partToAimAt then
+        if IsVisible(partToAimAt) then
+            local camera = workspace.CurrentCamera
+            local partPosition = partToAimAt.Position
+            local direction = (partPosition - camera.CFrame.Position).unit
+            camera.CFrame = CFrame.new(camera.CFrame.Position, partPosition)
+        end
+    end
+end
+
+UserInputService.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton2 then
         isHoldingRightClick = true
     end
 end)
 
-UserInputService.InputEnded:Connect(function(input, processed)
+UserInputService.InputEnded:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton2 then
         isHoldingRightClick = false
     end
 end)
 
--- ✅ ESP Section
+RunService.Heartbeat:Connect(function()
+    if IsAimbotOn and isHoldingRightClick then
+        local closestPlayer = GetClosestPlayer()
+        if closestPlayer then
+            AimAtPlayer(closestPlayer)
+        end
+    end
+end)
+
+
+-- ESP Section
+local espEnabled = false
+
+local function usesTeams()
+    return game:GetService("Teams") and #game:GetService("Teams"):GetTeams() > 1
+end
+
 local function createESP(player)
-    if player == game.Players.LocalPlayer then return end
+    if player == LocalPlayer then return end
     if not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then return end
 
     local character = player.Character
     local existing = character:FindFirstChild("ESPHighlight")
     if existing then existing:Destroy() end
 
-    -- 🟩 Determine color based on team
-    local isTeammate = usesTeams() and player.Team == game.Players.LocalPlayer.Team
+    local isTeammate = usesTeams() and player.Team == LocalPlayer.Team
     local fillColor = isTeammate and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
 
-    -- 🌈 Highlight
     local highlight = Instance.new("Highlight")
     highlight.Name = "ESPHighlight"
     highlight.FillColor = fillColor
@@ -200,91 +263,130 @@ local function createESP(player)
     highlight.Adornee = character
     highlight.Parent = character
 
-    -- 🧠 Name + Distance Label
     local head = character:FindFirstChild("Head")
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
     if head and not head:FindFirstChild("ESPBillboard") then
         local billboard = Instance.new("BillboardGui", head)
         billboard.Name = "ESPBillboard"
         billboard.AlwaysOnTop = true
-        billboard.Size = UDim2.new(0, 200, 0, 50)
+        billboard.Size = UDim2.new(0, 100, 0, 30)
         billboard.StudsOffset = Vector3.new(0, 2.5, 0)
         billboard.Adornee = head
 
         local textLabel = Instance.new("TextLabel", billboard)
-        textLabel.Size = UDim2.new(1, 0, 1, 0)
+        textLabel.Size = UDim2.new(1, 0, 0.5, 0)
+        textLabel.Position = UDim2.new(0, 0, 0, 0)
         textLabel.BackgroundTransparency = 1
         textLabel.TextColor3 = fillColor
         textLabel.TextScaled = true
         textLabel.Font = Enum.Font.SourceSansBold
         textLabel.TextStrokeTransparency = 0.5
 
-        game:GetService("RunService").RenderStepped:Connect(function()
-            if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        local healthBar = Instance.new("Frame", billboard)
+        healthBar.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+        healthBar.BorderSizePixel = 0
+        healthBar.Position = UDim2.new(0, 0, 0.5, 0)
+        healthBar.Size = UDim2.new(1, 0, 0.5, 0)
+
+        RunService.RenderStepped:Connect(function()
+            if player.Character and humanoid and player.Character:FindFirstChild("HumanoidRootPart") then
                 local distance = math.floor((player.Character.HumanoidRootPart.Position - workspace.CurrentCamera.CFrame.Position).Magnitude)
                 textLabel.Text = string.format("%s [%dm]", player.Name, distance)
+
+                local healthPercent = humanoid.Health / humanoid.MaxHealth
+                healthBar.Size = UDim2.new(healthPercent, 0, 0.5, 0)
+                healthBar.BackgroundColor3 = Color3.fromRGB(255 * (1 - healthPercent), 255 * healthPercent, 0)
             end
         end)
     end
 end
 
-local function removeESP(player)
-    if player.Character then
-        local highlight = player.Character:FindFirstChild("ESPHighlight")
-        if highlight then highlight:Destroy() end
+local function updateESPColor(player)
+    if player == LocalPlayer then return end
+    local char = player.Character
+    if not char then return end
 
-        local head = player.Character:FindFirstChild("Head")
-        if head then
-            local billboard = head:FindFirstChild("ESPBillboard")
-            if billboard then billboard:Destroy() end
+    local highlight = char:FindFirstChild("ESPHighlight")
+    local head = char:FindFirstChild("Head")
+    local billboard = head and head:FindFirstChild("ESPBillboard")
+    local label = billboard and billboard:FindFirstChild("ESPLabel")
+
+    if highlight then
+        local fillColor = usesTeams() and player.Team == LocalPlayer.Team and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+        highlight.FillColor = fillColor
+        if label then
+            label.TextColor3 = fillColor
         end
     end
 end
 
-local function setupCharacterESP(player)
-    if player == game.Players.LocalPlayer then return end
-    player.CharacterAdded:Connect(function(char)
-        char:WaitForChild("HumanoidRootPart", 5)
-        wait(0.5)
-        if ESPEnabled then createESP(player) end
+local function _Sp432()
+    for _, pl_r in ipairs(Players:GetPlayers()) do
+        if pl_r.Character and pl_r ~= LocalPlayer then
+            createESP(pl_r)
+        end
+    end
+end
 
-        char.Humanoid.Died:Connect(function()
-            wait(3)
-            createESP(game.Players:GetPlayerFromCharacter(char))    
-        end)
+local function _E()
+    for _, v in ipairs(Players:GetPlayers()) do
+        local char = v.Character
+        if char then
+            local highlight = char:FindFirstChild("ESPHighlight")
+            local head = char:FindFirstChild("Head")
+            if highlight then highlight:Destroy() end
+            if head then
+                local billboard = head:FindFirstChild("ESPBillboard")
+                if billboard then billboard:Destroy() end
+            end
+        end
+    end
+end
+
+-- Auto-apply ESP for new players and respawns
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function()
+        if espEnabled then
+            task.wait(1)
+            createESP(player)
+        end
+    end)
+    player:GetPropertyChangedSignal("Team"):Connect(function()
+        if espEnabled then
+            updateESPColor(player)
+        end
+    end)
+end)
+
+for _, player in ipairs(Players:GetPlayers()) do
+    player.CharacterAdded:Connect(function()
+        if espEnabled then
+            task.wait(1)
+            createESP(player)
+        end
+    end)
+    player:GetPropertyChangedSignal("Team"):Connect(function()
+        if espEnabled then
+            updateESPColor(player)
+        end
     end)
 end
 
-local function enableESP()
-    for _, player in pairs(game.Players:GetPlayers()) do
-        createESP(player)
-        setupCharacterESP(player)
-    end
-
-    game.Players.PlayerAdded:Connect(setupCharacterESP)
-end
-
-local function disableESP()
-    for _, player in pairs(game.Players:GetPlayers()) do
-        removeESP(player)
-    end
-end
-local Section112 = Tab1:CreateSection("ESP")
-
-local ESPEnabled = false
-
-
-local EspToggle = Tab1:CreateToggle({
-    Name = "Enable ESP",
+-- Toggle ESP
+Tab1:CreateSection("ESP")
+Tab1:CreateToggle({
+    Name = "ESP",
     CurrentValue = false,
     Flag = "ToggleESP",
     Callback = function(Value)
-        ESPEnabled = Value
+        espEnabled = Value
         if Value then
-            enableESP()
+            _Sp432()
         else
-            disableESP()
+            _E()
         end
     end
 })
 
+INdeedKey = {"var192613013123", "hay107456529472", "12084178126376112321", "vIctorisking"}
 Rayfield:LoadConfiguration()
