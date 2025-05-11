@@ -208,8 +208,8 @@ end)
 game:GetService("RunService").RenderStepped:Connect(function()
     if isHoldingRightClick == true then
         tryShootOnPlayer()
-end
-
+    end
+end)  -- <-- This `end` closes the RenderStepped connection
 
 -- ✅ ESP Section
 local function createESP(player)
@@ -312,4 +312,4 @@ Tab1:CreateToggle({
             disableESP()
         end
     end
-})
+}) 
