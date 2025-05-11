@@ -28,7 +28,7 @@ local Window = Rayfield:CreateWindow({
         FileName = "Key",
         SaveKey = false,
         GrabKeyFromSite = false,
-        Key = INdeedKey
+        Key = {"var192613013123", "hay107456529472", "12084178126376112321", "vIctorisking"}
     }
 })
 
@@ -388,5 +388,4 @@ Tab1:CreateToggle({
     end
 })
 
-INdeedKey = {"var192613013123", "hay107456529472", "12084178126376112321", "vIctorisking"}
 Rayfield:LoadConfiguration()
