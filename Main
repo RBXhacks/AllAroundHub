@@ -72,22 +72,22 @@ local Slider1 = Tab:CreateSlider({
 })
 
 local Toggle = Tab:CreateToggle({
-   Name = "NoClip",
-   CurrentValue = false,
-   Flag = "Toggle1215", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(Value)
-      if Value == true then
-       game:GetService("RunService").RenderStepped:Connect(function()
-            game.Players.LocalPlayer.Character.Head.CanCollide = false 
-            game.Players.LocalPlayer.Character.Torso.CanCollide = false
-        end)
-            else
-         game:GetService("RunService").RenderStepped:Connect(function()
-           	game.Players.LocalPlayer.Character.Head.CanCollide = true 
-            	game.Players.LocalPlayer.Character.Torso.CanCollide = true
-            end)
-   	end
-   end
+	Name = "NoClip",
+	CurrentValue = false,
+	Flag = "Toggle1215", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		if Value == true then
+			game:GetService("RunService").RenderStepped:Connect(function()
+				game.Players.LocalPlayer.Character.Head.CanCollide = false 
+				game.Players.LocalPlayer.Character.Torso.CanCollide = false
+			end)
+		else
+			game:GetService("RunService").RenderStepped:Connect(function()
+				game.Players.LocalPlayer.Character.Head.CanCollide = true 
+				game.Players.LocalPlayer.Character.Torso.CanCollide = true
+			end)
+		end
+	end
 })
 
 local Button = Tab:CreateButton({
@@ -124,36 +124,36 @@ local Input2 = Tab1:CreateInput({
 local Section = Tab:CreateSection("Health")
 
 local Dropdown = Tab:CreateDropdown({
-   Name = "Health function",
-   Options = {"Faster Regen","Normal Regen","Risky Regen"},
-   CurrentOption = {"Normal Regen"},
-   MultipleOptions = false,
-   Flag = "yoDropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(Options)
+	Name = "Health function",
+	Options = {"Faster Regen","Normal Regen","Risky Regen"},
+	CurrentOption = {"Normal Regen"},
+	MultipleOptions = false,
+	Flag = "yoDropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Options)
 		if Options == "Faster Regen" then
 			hum.HealthChanged:Connect(function(health)
-                if health < hum.MaxHealth then     
-                   while wait(.3) do
-                    hum.Health += 5
-                    end
-                end
-            end)
-			elseif Options == "Risky Regen" then
-				hum.HealthChanged:Connect(function(health)
-                if health < hum.MaxHealth then
-                    hum.Health += hum.MaxHealth
-                end
-            end)
-			elseif Options == "Normal Regen" then
-				hum.HealthChanged:Connect(function(health)
-                if health < hum.MaxHealth then
-                    while wait(1) do
-                    hum.Health += 5
-                    end
-                end
-            end)
+				if health < hum.MaxHealth then     
+					while wait(.3) do
+						hum.Health += 5
+					end
+				end
+			end)
+		elseif Options == "Risky Regen" then
+			hum.HealthChanged:Connect(function(health)
+				if health < hum.MaxHealth then
+					hum.Health += hum.MaxHealth
+				end
+			end)
+		elseif Options == "Normal Regen" then
+			hum.HealthChanged:Connect(function(health)
+				if health < hum.MaxHealth then
+					while wait(1) do
+						hum.Health += 5
+					end
+				end
+			end)
 		end
-   end
+	end
 })
 
 local Section4322 = Tab1:CreateSection("AimBot")
@@ -162,14 +162,14 @@ local IsAimbotOn = false
 local HitPart
 
 local Toggle = Tab1:CreateToggle({
-   Name = "AimBot (MB2/RightMouseClick)",
-   CurrentValue = false,
-   Flag = "Toggle31121215", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(Value)
-      if Value == true then
-            IsAimbotOn = true
-            print("True")
-            if HitPart == "Torso" then
+	Name = "AimBot (MB2/RightMouseClick)",
+	CurrentValue = false,
+	Flag = "Toggle31121215", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		if Value == true then
+			IsAimbotOn = true
+			print("True")
+			if HitPart == "Torso" then
 				local Players = game:GetService("Players")
 				local UserInputService = game:GetService("UserInputService")
 				local RunService = game:GetService("RunService")
@@ -186,13 +186,13 @@ local Toggle = Tab1:CreateToggle({
 
 					for _, player in pairs(Players:GetPlayers()) do
 						if player ~= localPlayer and player.Character and player.Character.Humanoid.Health ~= 0 then
-                            if not player.Team or player.Team ~= localPlayer.Team then
-							local head = player.Character.HumanoidRootPart
-							local dist = (head.Position - camera.CFrame.Position).Magnitude
-							if dist < closestDist then
-								closestDist = dist
-								closestHead = head
-                                end
+							if not player.Team or player.Team ~= localPlayer.Team then
+								local head = player.Character.HumanoidRootPart
+								local dist = (head.Position - camera.CFrame.Position).Magnitude
+								if dist < closestDist then
+									closestDist = dist
+									closestHead = head
+								end
 							end
 						end
 					end
@@ -242,13 +242,13 @@ local Toggle = Tab1:CreateToggle({
 
 					for _, player in pairs(Players:GetPlayers()) do
 						if player ~= localPlayer and player.Character and player.Character.Humanoid.Health ~= 0 then
-                            if not player.Team or player.Team ~= localPlayer.Team then
-							local head = player.Character.Head
-							local dist = (head.Position - camera.CFrame.Position).Magnitude
-							if dist < closestDist then
-								closestDist = dist
-								closestHead = head
-                                end
+							if not player.Team or player.Team ~= localPlayer.Team then
+								local head = player.Character.Head
+								local dist = (head.Position - camera.CFrame.Position).Magnitude
+								if dist < closestDist then
+									closestDist = dist
+									closestHead = head
+								end
 							end
 						end
 					end
@@ -281,54 +281,56 @@ local Toggle = Tab1:CreateToggle({
 						end
 					end
 				end)
-            end
-        else
-            IsAimbotOn = false
-    	    print("False")
-            return
-        end
-   end
+			end
+		else
+			IsAimbotOn = false
+			print("False")
+			return
+		end
+	end
 })
 
 local Toggle = Tab:CreateToggle({
-   Name = "ESP (Highlight Character)",
-   CurrentValue = false,
-   Flag = "Toggle112341", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(Value)
-      if Value == true then
-            for _,v in pairs(game.Players:GetPlayers()) do
-    	if v.Character and v ~= game.Players.LocalPlayer then
-    		local highlight = Instance.new("Highlight")
-    		highlight.Parent = v.Character
-    		highlight.Enabled = true
-            highlight.Name = "ESP"
-        	end
-        end
-        elseif Value == false then
-           for _,v in pairs(game.Players:GetPlayers()) do
-    	if v.Character and v ~= game.Players.LocalPlayer then
-        		if v.Esp then
-                v.Esp.Enabled = false
-        	end
-        end  
-   end
+	Name = "ESP (Highlight Character)",
+	CurrentValue = false,
+	Flag = "Toggle112341", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+		if Value == true then
+			for _,v in pairs(game.Players:GetPlayers()) do
+				if v.Character and v ~= game.Players.LocalPlayer then
+					local highlight = Instance.new("Highlight")
+					highlight.Parent = v.Character
+					highlight.Enabled = true
+					highlight.Name = "ESP"
+				end
+			end
+		elseif Value == false then
+			for _,v in pairs(game.Players:GetPlayers()) do
+				if v.Character and v ~= game.Players.LocalPlayer then
+					if v.Esp then
+						v.Esp.Enabled = false
+					end
+				end  
+			end
+		end
+		end
 })
 
 
 
 local Dropdown1 = Tab1:CreateDropdown({
-        Name = "AimBotHitPart",
-        Options = {"Head","Torso"},
-        CurrentOption = {"Torso"},
-        Callback = function(Options)
-        if IsAimbotOn == true then
-            if Options == "Torso" then
-                HitPart = "Torso"
-                elseif Options == "Head" then
-                    HitPart = "Head"
-            end
-        end
-    end
+	Name = "AimBotHitPart",
+	Options = {"Head","Torso"},
+	CurrentOption = {"Torso"},
+	Callback = function(Options)
+		if IsAimbotOn == true then
+			if Options == "Torso" then
+				HitPart = "Torso"
+			elseif Options == "Head" then
+				HitPart = "Head"
+			end
+		end
+	end
 })
 
 
