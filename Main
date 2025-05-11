@@ -2,48 +2,48 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
     Name = "Victor_Heimdal Hub",
-    Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+    Icon = 0,
     LoadingTitle = "Rayfield",
     LoadingSubtitle = "Credit: Sirius",
-    Theme = "AmberGlow", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+    Theme = "AmberGlow",
 
     DisableRayfieldPrompts = false,
-    DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+    DisableBuildWarnings = false,
 
     ConfigurationSaving = {
         Enabled = true,
-        FolderName = nil, -- Create a custom folder for your hub/game
+        FolderName = nil,
         FileName = "Big Hub"
     },
 
     Discord = {
-        Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
-        Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
-        RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+        Enabled = false,
+        Invite = "noinvitelink",
+        RememberJoins = true
     },
 
-    KeySystem = true, -- Set this to true to use our key system
+    KeySystem = true,
     KeySettings = {
         Title = "This legendary script needs key",
         Subtitle = "GIMME KEYYYY",
-        Note = "Ask the owner nicely for the key ", -- Use this to tell the user how to get a key
-        FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
-        SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
-        GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
-        Key = {"ezE","Victor_Heimdal-IsKing","WsbErBøsse"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+        Note = "Ask the owner nicely for the key",
+        FileName = "Key",
+        SaveKey = true,
+        GrabKeyFromSite = false,
+        Key = {"ezE","Victor_Heimdal-IsKing","WsbErBøsse"}
     }
 })
 
 local char = game.Players.LocalPlayer.Character
 local hum = char.Humanoid
 
-local Tab = Window:CreateTab("Main", 4483362458) -- Title, Image
-local Tab1 = Window:CreateTab("Misc", 4483362458) -- Title, Image
+local Tab = Window:CreateTab("Main", 4483362458)
+local Tab1 = Window:CreateTab("Misc", 4483362458)
 
 local Section = Tab:CreateSection("Main")
 
 -- JumpPower Slider
-local Slider = Tab:CreateSlider({
+Tab:CreateSlider({
     Name = "JumpPower",
     Range = {0, 500},
     Increment = 10,
@@ -51,14 +51,12 @@ local Slider = Tab:CreateSlider({
     CurrentValue = 10,
     Flag = "Slider1",
     Callback = function(Value)
-        if Value then
-            hum.JumpPower = Value
-        end
+        hum.JumpPower = Value
     end
 })
 
 -- WalkSpeed Slider
-local Slider1 = Tab:CreateSlider({
+Tab:CreateSlider({
     Name = "WalkSpeed",
     Range = {0, 500},
     Increment = 10,
@@ -66,44 +64,38 @@ local Slider1 = Tab:CreateSlider({
     CurrentValue = 10,
     Flag = "Slider2",
     Callback = function(Value)
-        if Value then
-            hum.WalkSpeed = Value
-        end
+        hum.WalkSpeed = Value
     end
 })
 
 -- NoClip Toggle
-local Toggle = Tab:CreateToggle({
+Tab:CreateToggle({
     Name = "NoClip",
     CurrentValue = false,
     Flag = "Toggle1215",
     Callback = function(Value)
-        if Value == true then
-            game:GetService("RunService").RenderStepped:Connect(function()
-                game.Players.LocalPlayer.Character.Head.CanCollide = false 
-                game.Players.LocalPlayer.Character.Torso.CanCollide = false
-            end)
-        else
-            game:GetService("RunService").RenderStepped:Connect(function()
-                game.Players.LocalPlayer.Character.Head.CanCollide = true 
-                game.Players.LocalPlayer.Character.Torso.CanCollide = true
-            end)
-        end
+        game:GetService("RunService").RenderStepped:Connect(function()
+            local character = game.Players.LocalPlayer.Character
+            if character then
+                character.Head.CanCollide = not Value
+                character.Torso.CanCollide = not Value
+            end
+        end)
     end
 })
 
 -- Force Remove hacks Button
-local Button = Tab:CreateButton({
-    Name = "Force Revome hacks",
+Tab:CreateButton({
+    Name = "Force Remove hacks",
     Callback = function()
         Rayfield:Destroy()
     end
 })
 
-local Section = Tab1:CreateSection("Chat")
+Tab1:CreateSection("Chat")
 
 -- Chat Input
-local Input = Tab1:CreateInput({
+Tab1:CreateInput({
     Name = "Chat",
     CurrentValue = "",
     PlaceholderText = "Put text here",
@@ -112,87 +104,75 @@ local Input = Tab1:CreateInput({
     Callback = function(Text)
         local TextChatService = game:GetService("TextChatService")
         TextChatService.TextChannels.RBXGeneral:SendAsync(Text)
-    end 
+    end
 })
 
 -- Kick Player Input
-local Input2 = Tab1:CreateInput({
+Tab1:CreateInput({
     Name = "Kick Player",
     CurrentValue = "",
     PlaceholderText = "Put text here",
     RemoveTextAfterFocusLost = false,
-    Flag = "Input231",
+    Flag = "InputKick",
     Callback = function(Text)
         game.Players:WaitForChild(Text):Kick("Your a bitch frfr")
-    end 
+    end
 })
 
-local Section = Tab:CreateSection("Health")
+Tab:CreateSection("Health")
 
 -- Health Function Dropdown
-local Dropdown = Tab:CreateDropdown({
+Tab:CreateDropdown({
     Name = "Health function",
     Options = {"Faster Regen","Normal Regen","Risky Regen"},
     CurrentOption = {"Normal Regen"},
     MultipleOptions = false,
     Flag = "yoDropdown1",
-    Callback = function(Options)
-        if Options == "Faster Regen" then
-            hum.HealthChanged:Connect(function(health)
-                if health < hum.MaxHealth then     
-                    while wait(.3) do
+    Callback = function(Option)
+        hum.HealthChanged:Connect(function(health)
+            if health < hum.MaxHealth then
+                if Option == "Faster Regen" then
+                    while wait(0.3) do
                         hum.Health += 5
                     end
-                end
-            end)
-        elseif Options == "Risky Regen" then
-            hum.HealthChanged:Connect(function(health)
-                if health < hum.MaxHealth then
-                    hum.Health += hum.MaxHealth
-                end
-            end)
-        elseif Options == "Normal Regen" then
-            hum.HealthChanged:Connect(function(health)
-                if health < hum.MaxHealth then
+                elseif Option == "Normal Regen" then
                     while wait(1) do
                         hum.Health += 5
                     end
+                elseif Option == "Risky Regen" then
+                    hum.Health += hum.MaxHealth
                 end
-            end)
-        end
+            end
+        end)
     end
 })
 
 local Section4322 = Tab1:CreateSection("AimBot")
 
 local IsAimbotOn = false
-local HitPart = "Torso"  -- Default hit part
+local HitPart = "Torso"
 
-local Toggle = Tab1:CreateToggle({
+Tab1:CreateToggle({
     Name = "AimBot (MB2/RightMouseClick)",
     CurrentValue = false,
     Flag = "Toggle5",
     Callback = function(Value)
-        IsAimbotOn = Value -- Update the aimbot toggle state
+        IsAimbotOn = Value
     end
 })
 
--- AimBot HitPart Dropdown
-local Dropdown1 = Tab1:CreateDropdown({
+Tab1:CreateDropdown({
     Name = "AimBotHitPart",
     Options = {"Head", "Torso"},
     CurrentOption = {"Torso"},
     Callback = function(Options)
-        HitPart = Options[1]  -- Update the hit part based on dropdown selection
+        HitPart = Options[1]
     end
 })
 
--- Aimbot Logic
 local function usesTeams()
-    for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
-        if player.Team ~= nil then
-            return true
-        end
+    for _, player in ipairs(game.Players:GetPlayers()) do
+        if player.Team then return true end
     end
     return false
 end
@@ -200,14 +180,11 @@ end
 local function isVisible(targetPart)
     local origin = workspace.CurrentCamera.CFrame.Position
     local direction = (targetPart.Position - origin)
-
     local raycastParams = RaycastParams.new()
     raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
     raycastParams.FilterDescendantsInstances = {game.Players.LocalPlayer.Character}
     raycastParams.IgnoreWater = true
-
     local result = workspace:Raycast(origin, direction, raycastParams)
-
     return result and result.Instance:IsDescendantOf(targetPart.Parent)
 end
 
@@ -220,29 +197,25 @@ local function getNearestPlayerHead()
     local closestDist = math.huge
     local closestHead = nil
     local hasTeams = usesTeams()
-
-    for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-        if player ~= game.Players.LocalPlayer and player.Character and player.Character:FindFirstChild("Head") then
-            local head = player.Character.Head
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player ~= game.Players.LocalPlayer and player.Character and player.Character:FindFirstChild(HitPart) then
+            local targetPart = player.Character[HitPart]
             local humanoid = player.Character:FindFirstChild("Humanoid")
-
             if humanoid and humanoid.Health > 0 then
-                local isEnemy = not hasTeams or (player.Team ~= game.Players.LocalPlayer.Team)
-                if isEnemy and isVisible(head) and isInFOV(head) then
-                    local dist = (head.Position - workspace.CurrentCamera.CFrame.Position).Magnitude
+                local isEnemy = not hasTeams or player.Team ~= game.Players.LocalPlayer.Team
+                if isEnemy and isVisible(targetPart) and isInFOV(targetPart) then
+                    local dist = (targetPart.Position - workspace.CurrentCamera.CFrame.Position).Magnitude
                     if dist < closestDist then
                         closestDist = dist
-                        closestHead = head
+                        closestHead = targetPart
                     end
                 end
             end
         end
     end
-
     return closestHead
 end
 
--- Right Mouse Click Input Handling
 local UserInputService = game:GetService("UserInputService")
 local isHoldingRightClick = false
 
@@ -258,18 +231,95 @@ UserInputService.InputEnded:Connect(function(input, processed)
     end
 end)
 
--- Aimbot Camera Update
 game:GetService("RunService").RenderStepped:Connect(function()
     if IsAimbotOn and isHoldingRightClick then
-        local targetPart = HitPart == "Head" and "Head" or "Torso"
-        local targetHead = getNearestPlayerHead()
-        if targetHead then
-            local targetPos = targetHead.Position
+        local targetPart = getNearestPlayerHead()
+        if targetPart then
+            local targetPos = targetPart.Position
             local camPos = workspace.CurrentCamera.CFrame.Position
-            local newLookVector = (targetPos - camPos).Unit
-            workspace.CurrentCamera.CFrame = CFrame.new(camPos, camPos + newLookVector)
+            workspace.CurrentCamera.CFrame = CFrame.new(camPos, targetPos)
         end
     end
 end)
+
+-- ✅ ESP Section
+Tab1:CreateSection("ESP")
+
+local function createESP(player)
+    if player.Character and player.Character:FindFirstChild("Head") then
+        local head = player.Character.Head
+        if head:FindFirstChild("ESPLabel") then return end
+
+        local billboard = Instance.new("BillboardGui")
+        billboard.Name = "ESPLabel"
+        billboard.Size = UDim2.new(0, 100, 0, 40)
+        billboard.AlwaysOnTop = true
+        billboard.Adornee = head
+        billboard.StudsOffset = Vector3.new(0, 2, 0)
+        billboard.Parent = head
+
+        local text = Instance.new("TextLabel", billboard)
+        text.Size = UDim2.new(1, 0, 1, 0)
+        text.BackgroundTransparency = 1
+        text.Text = player.Name
+        text.TextColor3 = Color3.new(1, 0, 0)
+        text.TextScaled = true
+        text.Font = Enum.Font.SourceSansBold
+    end
+end
+
+local function removeESP(player)
+    if player.Character and player.Character:FindFirstChild("Head") then
+        local head = player.Character.Head
+        local label = head:FindFirstChild("ESPLabel")
+        if label then label:Destroy() end
+    end
+end
+
+local function enableESP()
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player ~= game.Players.LocalPlayer then
+            createESP(player)
+        end
+    end
+
+    game.Players.PlayerAdded:Connect(function(player)
+        player.CharacterAdded:Connect(function()
+            wait(1)
+            createESP(player)
+        end)
+    end)
+
+    for _, player in pairs(game.Players:GetPlayers()) do
+        player.CharacterAdded:Connect(function()
+            wait(1)
+            createESP(player)
+        end)
+    end
+end
+
+local function disableESP()
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player ~= game.Players.LocalPlayer then
+            removeESP(player)
+        end
+    end
+end
+
+local ESPEnabled = false
+
+Tab1:CreateToggle({
+    Name = "Enable ESP",
+    CurrentValue = false,
+    Flag = "ToggleESP",
+    Callback = function(Value)
+        ESPEnabled = Value
+        if Value then
+            enableESP()
+        else
+            disableESP()
+        end
+    end
+})
 
 Rayfield:LoadConfiguration()
