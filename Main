@@ -159,21 +159,162 @@ local Dropdown = Tab:CreateDropdown({
 local Section4322 = Tab1:CreateSection("AimBot")
 
 local IsAimbotOn = false
+local HitPart
 
 local Toggle = Tab1:CreateToggle({
-   Name = "AimBot",
+   Name = "AimBot (MB2/RightMouseClick)",
    CurrentValue = false,
    Flag = "Toggle31121215", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
    Callback = function(Value)
       if Value == true then
             IsAimbotOn = true
-            print(IsAimBotOn)
+            print("True")
+            if HitPart == "Torso" then
+				local Players = game:GetService("Players")
+				local UserInputService = game:GetService("UserInputService")
+				local RunService = game:GetService("RunService")
+
+				local localPlayer = Players.LocalPlayer
+				local camera = workspace.CurrentCamera
+
+				local isHoldingRightClick = false
+
+				-- Find the nearest player's Head
+				local function getNearestPlayerTorso()
+					local closestDist = math.huge
+					local closestHead = nil
+
+					for _, player in pairs(Players:GetPlayers()) do
+						if player ~= localPlayer and player.Character and player.Character.Humanoid.Health ~= 0 then
+                            if not player.Team or player.Team ~= localPlayer.Team then
+							local head = player.Character.HumanoidRootPart
+							local dist = (head.Position - camera.CFrame.Position).Magnitude
+							if dist < closestDist then
+								closestDist = dist
+								closestHead = head
+                                end
+							end
+						end
+					end
+
+					return closestHead
+				end
+
+				-- Input detection
+				UserInputService.InputBegan:Connect(function(input, processed)
+					if input.UserInputType == Enum.UserInputType.MouseButton2 then
+						isHoldingRightClick = true
+					end
+				end)
+
+				UserInputService.InputEnded:Connect(function(input, processed)
+					if input.UserInputType == Enum.UserInputType.MouseButton2 then
+						isHoldingRightClick = false
+					end
+				end)
+
+				-- Main loop
+				RunService.RenderStepped:Connect(function()
+					if isHoldingRightClick then
+						local targetHead = getNearestPlayerTorso()
+						if targetHead then
+							local targetPos = targetHead.Position
+							local camPos = camera.CFrame.Position
+							local newLookVector = (targetPos - camPos).Unit
+							camera.CFrame = CFrame.new(camPos, camPos + newLookVector)
+						end
+					end
+				end)
+			elseif HitPart == "Head" then
+				local Players = game:GetService("Players")
+				local UserInputService = game:GetService("UserInputService")
+				local RunService = game:GetService("RunService")
+
+				local localPlayer = Players.LocalPlayer
+				local camera = workspace.CurrentCamera
+
+				local isHoldingRightClick = false
+
+				-- Find the nearest player's Head
+				local function getNearestPlayerHead()
+					local closestDist = math.huge
+					local closestHead = nil
+
+					for _, player in pairs(Players:GetPlayers()) do
+						if player ~= localPlayer and player.Character and player.Character.Humanoid.Health ~= 0 then
+                            if not player.Team or player.Team ~= localPlayer.Team then
+							local head = player.Character.Head
+							local dist = (head.Position - camera.CFrame.Position).Magnitude
+							if dist < closestDist then
+								closestDist = dist
+								closestHead = head
+                                end
+							end
+						end
+					end
+
+					return closestHead
+				end
+
+				-- Input detection
+				UserInputService.InputBegan:Connect(function(input, processed)
+					if input.UserInputType == Enum.UserInputType.MouseButton2 then
+						isHoldingRightClick = true
+					end
+				end)
+
+				UserInputService.InputEnded:Connect(function(input, processed)
+					if input.UserInputType == Enum.UserInputType.MouseButton2 then
+						isHoldingRightClick = false
+					end
+				end)
+
+				-- Main loop
+				RunService.RenderStepped:Connect(function()
+					if isHoldingRightClick then
+						local targetHead = getNearestPlayerHead()
+						if targetHead then
+							local targetPos = targetHead.Position
+							local camPos = camera.CFrame.Position
+							local newLookVector = (targetPos - camPos).Unit
+							camera.CFrame = CFrame.new(camPos, camPos + newLookVector)
+						end
+					end
+				end)
+            end
         else
             IsAimbotOn = false
-	    print(IsAimBotOn)
+    	    print("False")
+            return
         end
    end
 })
+
+local Toggle = Tab:CreateToggle({
+   Name = "ESP (Highlight Character)",
+   CurrentValue = false,
+   Flag = "Toggle112341", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+      if Value == true then
+            for _,v in pairs(game.Players:GetPlayers()) do
+    	if v.Character and v ~= game.Players.LocalPlayer then
+    		local highlight = Instance.new("Highlight")
+    		highlight.Parent = v.Character
+    		highlight.Enabled = true
+            highlight.Name = "ESP"
+        	end
+        end
+        elseif Value == false then
+           for _,v in pairs(game.Players:GetPlayers()) do
+    	if v.Character and v ~= game.Players.LocalPlayer then
+        		if v.Esp then
+                v.Esp.Enabled = false
+        	end
+        end  
+   end
+})
+
+
 
 local Dropdown1 = Tab1:CreateDropdown({
         Name = "AimBotHitPart",
@@ -182,113 +323,9 @@ local Dropdown1 = Tab1:CreateDropdown({
         Callback = function(Options)
         if IsAimbotOn == true then
             if Options == "Torso" then
-                local Players = game:GetService("Players")
-                local UserInputService = game:GetService("UserInputService")
-                local RunService = game:GetService("RunService")
-
-                local localPlayer = Players.LocalPlayer
-                local camera = workspace.CurrentCamera
-
-                local isHoldingRightClick = false
-
--- Find the nearest player's Head
-             local function getNearestPlayerTorso()
-                local closestDist = math.huge
-                local closestHead = nil
-
-	for _, player in pairs(Players:GetPlayers()) do
-		if player ~= localPlayer and player.Character and player.Character.Humanoid.Health >= 0 and player.Team ~= localPlayer.Team then
-			local head = player.Character.HumanoidRootPart
-			local dist = (head.Position - camera.CFrame.Position).Magnitude
-			if dist < closestDist then
-				closestDist = dist
-				closestHead = head
-			end
-		end
-	end
-
-	return closestHead
-end
-
--- Input detection
-UserInputService.InputBegan:Connect(function(input, processed)
-	if input.UserInputType == Enum.UserInputType.MouseButton2 then
-		isHoldingRightClick = true
-	end
-end)
-
-UserInputService.InputEnded:Connect(function(input, processed)
-	if input.UserInputType == Enum.UserInputType.MouseButton2 then
-		isHoldingRightClick = false
-	end
-end)
-
--- Main loop
-RunService.RenderStepped:Connect(function()
-	if isHoldingRightClick then
-		local targetHead = getNearestPlayerTorso()
-		if targetHead then
-			local targetPos = targetHead.Position
-			local camPos = camera.CFrame.Position
-			local newLookVector = (targetPos - camPos).Unit
-			camera.CFrame = CFrame.new(camPos, camPos + newLookVector)
-		end
-	end
-end)
-            elseif Options == "Head" then
-                local Players = game:GetService("Players")
-                local UserInputService = game:GetService("UserInputService")
-                local RunService = game:GetService("RunService")
-
-                local localPlayer = Players.LocalPlayer
-                local camera = workspace.CurrentCamera
-
-                local isHoldingRightClick = false
-
--- Find the nearest player's Head
-             local function getNearestPlayerHead()
-                local closestDist = math.huge
-                local closestHead = nil
-
-	for _, player in pairs(Players:GetPlayers()) do
-		if player ~= localPlayer and player.Character and player.Character.Humanoid.Health >= 0 and player.Team ~= localPlayer.Team then
-			local head = player.Character.Head
-			local dist = (head.Position - camera.CFrame.Position).Magnitude
-			if dist < closestDist then
-				closestDist = dist
-				closestHead = head
-			end
-		end
-	end
-
-	return closestHead
-end
-
--- Input detection
-UserInputService.InputBegan:Connect(function(input, processed)
-	if input.UserInputType == Enum.UserInputType.MouseButton2 then
-		isHoldingRightClick = true
-	end
-end)
-
-UserInputService.InputEnded:Connect(function(input, processed)
-	if input.UserInputType == Enum.UserInputType.MouseButton2 then
-		isHoldingRightClick = false
-	end
-end)
-
--- Main loop
-RunService.RenderStepped:Connect(function()
-	if isHoldingRightClick then
-		local targetHead = getNearestPlayerHead()
-		if targetHead then
-			local targetPos = targetHead.Position
-			local camPos = camera.CFrame.Position
-			local newLookVector = (targetPos - camPos).Unit
-			camera.CFrame = CFrame.new(camPos, camPos + newLookVector)
-		end
-	end
- end)
+                HitPart = "Torso"
+                elseif Options == "Head" then
+                    HitPart = "Head"
             end
         end
     end
