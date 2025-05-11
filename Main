@@ -243,66 +243,92 @@ game:GetService("RunService").RenderStepped:Connect(function()
 end)
 
 -- ✅ ESP Section
+-- ✅ Advanced ESP Section with Name + Distance and Team Color Highlights
 Tab1:CreateSection("ESP")
 
 local function createESP(player)
-    if player.Character and player.Character:FindFirstChild("Head") then
-        local head = player.Character.Head
-        if head:FindFirstChild("ESPLabel") then return end
+    if player == game.Players.LocalPlayer then return end
+    if not player.Character or not player.Character:FindFirstChild("HumanoidRootPart") then return end
 
-        local billboard = Instance.new("BillboardGui")
-        billboard.Name = "ESPLabel"
-        billboard.Size = UDim2.new(0, 100, 0, 40)
+    local character = player.Character
+    local existing = character:FindFirstChild("ESPHighlight")
+    if existing then existing:Destroy() end
+
+    -- 🟩 Determine color based on team
+    local isTeammate = usesTeams() and player.Team == game.Players.LocalPlayer.Team
+    local fillColor = isTeammate and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(255, 0, 0)
+
+    -- 🌈 Highlight
+    local highlight = Instance.new("Highlight")
+    highlight.Name = "ESPHighlight"
+    highlight.FillColor = fillColor
+    highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+    highlight.FillTransparency = 0.5
+    highlight.OutlineTransparency = 0
+    highlight.Adornee = character
+    highlight.Parent = character
+
+    -- 🧠 Name + Distance Label
+    local head = character:FindFirstChild("Head")
+    if head and not head:FindFirstChild("ESPBillboard") then
+        local billboard = Instance.new("BillboardGui", head)
+        billboard.Name = "ESPBillboard"
         billboard.AlwaysOnTop = true
+        billboard.Size = UDim2.new(0, 200, 0, 50)
+        billboard.StudsOffset = Vector3.new(0, 2.5, 0)
         billboard.Adornee = head
-        billboard.StudsOffset = Vector3.new(0, 2, 0)
-        billboard.Parent = head
 
-        local text = Instance.new("TextLabel", billboard)
-        text.Size = UDim2.new(1, 0, 1, 0)
-        text.BackgroundTransparency = 1
-        text.Text = player.Name
-        text.TextColor3 = Color3.new(1, 0, 0)
-        text.TextScaled = true
-        text.Font = Enum.Font.SourceSansBold
+        local textLabel = Instance.new("TextLabel", billboard)
+        textLabel.Size = UDim2.new(1, 0, 1, 0)
+        textLabel.BackgroundTransparency = 1
+        textLabel.TextColor3 = fillColor
+        textLabel.TextScaled = true
+        textLabel.Font = Enum.Font.SourceSansBold
+        textLabel.TextStrokeTransparency = 0.5
+
+        game:GetService("RunService").RenderStepped:Connect(function()
+            if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                local distance = math.floor((player.Character.HumanoidRootPart.Position - workspace.CurrentCamera.CFrame.Position).Magnitude)
+                textLabel.Text = string.format("%s [%dm]", player.Name, distance)
+            end
+        end)
     end
 end
 
 local function removeESP(player)
-    if player.Character and player.Character:FindFirstChild("Head") then
-        local head = player.Character.Head
-        local label = head:FindFirstChild("ESPLabel")
-        if label then label:Destroy() end
+    if player.Character then
+        local highlight = player.Character:FindFirstChild("ESPHighlight")
+        if highlight then highlight:Destroy() end
+
+        local head = player.Character:FindFirstChild("Head")
+        if head then
+            local billboard = head:FindFirstChild("ESPBillboard")
+            if billboard then billboard:Destroy() end
+        end
     end
+end
+
+local function setupCharacterESP(player)
+    if player == game.Players.LocalPlayer then return end
+    player.CharacterAdded:Connect(function(char)
+        char:WaitForChild("HumanoidRootPart", 5)
+        wait(0.5)
+        if ESPEnabled then createESP(player) end
+    end)
 end
 
 local function enableESP()
     for _, player in pairs(game.Players:GetPlayers()) do
-        if player ~= game.Players.LocalPlayer then
-            createESP(player)
-        end
+        createESP(player)
+        setupCharacterESP(player)
     end
 
-    game.Players.PlayerAdded:Connect(function(player)
-        player.CharacterAdded:Connect(function()
-            wait(1)
-            createESP(player)
-        end)
-    end)
-
-    for _, player in pairs(game.Players:GetPlayers()) do
-        player.CharacterAdded:Connect(function()
-            wait(1)
-            createESP(player)
-        end)
-    end
+    game.Players.PlayerAdded:Connect(setupCharacterESP)
 end
 
 local function disableESP()
     for _, player in pairs(game.Players:GetPlayers()) do
-        if player ~= game.Players.LocalPlayer then
-            removeESP(player)
-        end
+        removeESP(player)
     end
 end
 
@@ -321,5 +347,6 @@ Tab1:CreateToggle({
         end
     end
 })
+
 
 Rayfield:LoadConfiguration()
