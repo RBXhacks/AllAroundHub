@@ -174,8 +174,8 @@ local Toggle = Tab1:CreateToggle({
 })
 
 local Dropdown1 = Tab1:CreateDropdown({
-        Name = "AimBotHitPart"
-        Options = {"Head","Torso"}
+        Name = "AimBotHitPart",
+        Options = {"Head","Torso"},
         Callback = function(Options)
             if Options == "Torso" and IsAimbotOn == true then
                 local Players = game:GetService("Players")
