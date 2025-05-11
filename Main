@@ -268,10 +268,12 @@ local function disableESP()
         removeESP(player)
     end
 end
+local Section112 = Tab1:CreateSection("ESP")
 
 local ESPEnabled = false
 
-Tab1:CreateToggle({
+
+local EspToggle = Tab1:CreateToggle({
     Name = "Enable ESP",
     CurrentValue = false,
     Flag = "ToggleESP",
