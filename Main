@@ -167,8 +167,10 @@ local Toggle = Tab1:CreateToggle({
    Callback = function(Value)
       if Value == true then
             IsAimbotOn = true
+            print(IsAimBotOn)
         else
             IsAimbotOn = false
+	    print(IsAimBotOn)
         end
    end
 })
