@@ -26,7 +26,7 @@ local Window = Rayfield:CreateWindow({
         Subtitle = "GIMME KEYYYY",
         Note = "Ask the owner nicely for the key",
         FileName = "Key",
-        SaveKey = true,
+        SaveKey = false,
         GrabKeyFromSite = false,
         Key = INdeedKey
     }
