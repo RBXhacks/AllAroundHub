@@ -141,7 +141,7 @@ Tab:CreateDropdown({
 })
 
 -- AimBot Section
-local Section112 = Tab:CreateSection("AimBot")
+local Section112 = Tab1:CreateSection("AimBot")
 local IsAimbotOn = false
 local HitPart = "Torso"
 
