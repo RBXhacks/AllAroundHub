@@ -1,38 +1,37 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-
 local Window = Rayfield:CreateWindow({
-	Name = "Victor_Heimdal Hub",
-	Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
-	LoadingTitle = "Rayfield",
-	LoadingSubtitle = "Credit: Sirius",
-	Theme = "AmberGlow", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+    Name = "Victor_Heimdal Hub",
+    Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+    LoadingTitle = "Rayfield",
+    LoadingSubtitle = "Credit: Sirius",
+    Theme = "AmberGlow", -- Check https://docs.sirius.menu/rayfield/configuration/themes
 
-	DisableRayfieldPrompts = false,
-	DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+    DisableRayfieldPrompts = false,
+    DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
 
-	ConfigurationSaving = {
-		Enabled = true,
-		FolderName = nil, -- Create a custom folder for your hub/game
-		FileName = "Big Hub"
-	},
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = nil, -- Create a custom folder for your hub/game
+        FileName = "Big Hub"
+    },
 
-	Discord = {
-		Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
-		Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
-		RememberJoins = true -- Set this to false to make them join the discord every time they load it up
-	},
+    Discord = {
+        Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
+        Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
+        RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+    },
 
-	KeySystem = true, -- Set this to true to use our key system
-	KeySettings = {
-		Title = "This legendary script needs key",
-		Subtitle = "GIMME KEYYYY",
-		Note = "Ask the owner nicely for the key ", -- Use this to tell the user how to get a key
-		FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
-		SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
-		GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
-		Key = {"ezE","Victor_Heimdal-IsKing","WsbErBøsse"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
-	}
+    KeySystem = true, -- Set this to true to use our key system
+    KeySettings = {
+        Title = "This legendary script needs key",
+        Subtitle = "GIMME KEYYYY",
+        Note = "Ask the owner nicely for the key ", -- Use this to tell the user how to get a key
+        FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+        SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+        GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+        Key = {"ezE","Victor_Heimdal-IsKing","WsbErBøsse"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+    }
 })
 
 local char = game.Players.LocalPlayer.Character
@@ -43,335 +42,234 @@ local Tab1 = Window:CreateTab("Misc", 4483362458) -- Title, Image
 
 local Section = Tab:CreateSection("Main")
 
+-- JumpPower Slider
 local Slider = Tab:CreateSlider({
-	Name = "JumpPower",
-	Range = {0, 500},
-	Increment = 10,
-	Suffix = "JumpPower",
-	CurrentValue = 10,
-	Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		if Value then
-			hum.JumpPower = Value
-		end
-	end
+    Name = "JumpPower",
+    Range = {0, 500},
+    Increment = 10,
+    Suffix = "JumpPower",
+    CurrentValue = 10,
+    Flag = "Slider1",
+    Callback = function(Value)
+        if Value then
+            hum.JumpPower = Value
+        end
+    end
 })
 
+-- WalkSpeed Slider
 local Slider1 = Tab:CreateSlider({
-	Name = "WalkSpeed",
-	Range = {0, 500},
-	Increment = 10,
-	Suffix = "WalkSpeed",
-	CurrentValue = 10,
-	Flag = "Slider2", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		if Value then
-			hum.WalkSpeed = Value
-		end
-	end
+    Name = "WalkSpeed",
+    Range = {0, 500},
+    Increment = 10,
+    Suffix = "WalkSpeed",
+    CurrentValue = 10,
+    Flag = "Slider2",
+    Callback = function(Value)
+        if Value then
+            hum.WalkSpeed = Value
+        end
+    end
 })
 
+-- NoClip Toggle
 local Toggle = Tab:CreateToggle({
-	Name = "NoClip",
-	CurrentValue = false,
-	Flag = "Toggle1215", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		if Value == true then
-			game:GetService("RunService").RenderStepped:Connect(function()
-				game.Players.LocalPlayer.Character.Head.CanCollide = false 
-				game.Players.LocalPlayer.Character.Torso.CanCollide = false
-			end)
-		else
-			game:GetService("RunService").RenderStepped:Connect(function()
-				game.Players.LocalPlayer.Character.Head.CanCollide = true 
-				game.Players.LocalPlayer.Character.Torso.CanCollide = true
-			end)
-		end
-	end
+    Name = "NoClip",
+    CurrentValue = false,
+    Flag = "Toggle1215",
+    Callback = function(Value)
+        if Value == true then
+            game:GetService("RunService").RenderStepped:Connect(function()
+                game.Players.LocalPlayer.Character.Head.CanCollide = false 
+                game.Players.LocalPlayer.Character.Torso.CanCollide = false
+            end)
+        else
+            game:GetService("RunService").RenderStepped:Connect(function()
+                game.Players.LocalPlayer.Character.Head.CanCollide = true 
+                game.Players.LocalPlayer.Character.Torso.CanCollide = true
+            end)
+        end
+    end
 })
 
+-- Force Remove hacks Button
 local Button = Tab:CreateButton({
-	Name = "Force Revome hacks",
-	Callback = function()
-		Rayfield:Destroy()
-	end
+    Name = "Force Revome hacks",
+    Callback = function()
+        Rayfield:Destroy()
+    end
 })
 
 local Section = Tab1:CreateSection("Chat")
 
+-- Chat Input
 local Input = Tab1:CreateInput({
-	Name = "Chat",
-	CurrentValue = "",
-	PlaceholderText = "Put text here",
-	RemoveTextAfterFocusLost = false,
-	Flag = "Input231",
-	Callback = function(Text)
-		local TextChatService = game:GetService("TextChatService")
-		TextChatService.TextChannels.RBXGeneral:SendAsync(Text)
-	end 
+    Name = "Chat",
+    CurrentValue = "",
+    PlaceholderText = "Put text here",
+    RemoveTextAfterFocusLost = false,
+    Flag = "Input231",
+    Callback = function(Text)
+        local TextChatService = game:GetService("TextChatService")
+        TextChatService.TextChannels.RBXGeneral:SendAsync(Text)
+    end 
 })
+
+-- Kick Player Input
 local Input2 = Tab1:CreateInput({
-	Name = "Kick Player",
-	CurrentValue = "",
-	PlaceholderText = "Put text here",
-	RemoveTextAfterFocusLost = false,
-	Flag = "Input231",
-	Callback = function(Text)
-		game.Players:WaitForChild(Text):Kick("Your a bitch frfr")
-	end 
+    Name = "Kick Player",
+    CurrentValue = "",
+    PlaceholderText = "Put text here",
+    RemoveTextAfterFocusLost = false,
+    Flag = "Input231",
+    Callback = function(Text)
+        game.Players:WaitForChild(Text):Kick("Your a bitch frfr")
+    end 
 })
 
 local Section = Tab:CreateSection("Health")
 
+-- Health Function Dropdown
 local Dropdown = Tab:CreateDropdown({
-	Name = "Health function",
-	Options = {"Faster Regen","Normal Regen","Risky Regen"},
-	CurrentOption = {"Normal Regen"},
-	MultipleOptions = false,
-	Flag = "yoDropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Options)
-		if Options == "Faster Regen" then
-			hum.HealthChanged:Connect(function(health)
-				if health < hum.MaxHealth then     
-					while wait(.3) do
-						hum.Health += 5
-					end
-				end
-			end)
-		elseif Options == "Risky Regen" then
-			hum.HealthChanged:Connect(function(health)
-				if health < hum.MaxHealth then
-					hum.Health += hum.MaxHealth
-				end
-			end)
-		elseif Options == "Normal Regen" then
-			hum.HealthChanged:Connect(function(health)
-				if health < hum.MaxHealth then
-					while wait(1) do
-						hum.Health += 5
-					end
-				end
-			end)
-		end
-	end
+    Name = "Health function",
+    Options = {"Faster Regen","Normal Regen","Risky Regen"},
+    CurrentOption = {"Normal Regen"},
+    MultipleOptions = false,
+    Flag = "yoDropdown1",
+    Callback = function(Options)
+        if Options == "Faster Regen" then
+            hum.HealthChanged:Connect(function(health)
+                if health < hum.MaxHealth then     
+                    while wait(.3) do
+                        hum.Health += 5
+                    end
+                end
+            end)
+        elseif Options == "Risky Regen" then
+            hum.HealthChanged:Connect(function(health)
+                if health < hum.MaxHealth then
+                    hum.Health += hum.MaxHealth
+                end
+            end)
+        elseif Options == "Normal Regen" then
+            hum.HealthChanged:Connect(function(health)
+                if health < hum.MaxHealth then
+                    while wait(1) do
+                        hum.Health += 5
+                    end
+                end
+            end)
+        end
+    end
 })
 
 local Section4322 = Tab1:CreateSection("AimBot")
 
 local IsAimbotOn = false
-local HitPart
+local HitPart = "Torso"  -- Default hit part
 
 local Toggle = Tab1:CreateToggle({
-	Name = "AimBot (MB2/RightMouseClick)",
-	CurrentValue = false,
-	Flag = "Toggle5", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		if Value == true then
-			IsAimbotOn = true
-			print("True")
-			if HitPart == "Torso" then
-				local Players = game:GetService("Players")
-				local UserInputService = game:GetService("UserInputService")
-				local RunService = game:GetService("RunService")
+    Name = "AimBot (MB2/RightMouseClick)",
+    CurrentValue = false,
+    Flag = "Toggle5",
+    Callback = function(Value)
+        IsAimbotOn = Value -- Update the aimbot toggle state
+    end
+})
 
-				local localPlayer = Players.LocalPlayer
-				local camera = workspace.CurrentCamera
+-- AimBot HitPart Dropdown
+local Dropdown1 = Tab1:CreateDropdown({
+    Name = "AimBotHitPart",
+    Options = {"Head", "Torso"},
+    CurrentOption = {"Torso"},
+    Callback = function(Options)
+        HitPart = Options[1]  -- Update the hit part based on dropdown selection
+    end
+})
 
-				local isHoldingRightClick = false
+-- Aimbot Logic
+local function usesTeams()
+    for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+        if player.Team ~= nil then
+            return true
+        end
+    end
+    return false
+end
 
-				local IsAimbotOn = false
-local HitPart
+local function isVisible(targetPart)
+    local origin = workspace.CurrentCamera.CFrame.Position
+    local direction = (targetPart.Position - origin)
 
-local Players = game:GetService("Players")
+    local raycastParams = RaycastParams.new()
+    raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+    raycastParams.FilterDescendantsInstances = {game.Players.LocalPlayer.Character}
+    raycastParams.IgnoreWater = true
+
+    local result = workspace:Raycast(origin, direction, raycastParams)
+
+    return result and result.Instance:IsDescendantOf(targetPart.Parent)
+end
+
+local function isInFOV(part)
+    local screenPoint, onScreen = workspace.CurrentCamera:WorldToViewportPoint(part.Position)
+    return onScreen
+end
+
+local function getNearestPlayerHead()
+    local closestDist = math.huge
+    local closestHead = nil
+    local hasTeams = usesTeams()
+
+    for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+        if player ~= game.Players.LocalPlayer and player.Character and player.Character:FindFirstChild("Head") then
+            local head = player.Character.Head
+            local humanoid = player.Character:FindFirstChild("Humanoid")
+
+            if humanoid and humanoid.Health > 0 then
+                local isEnemy = not hasTeams or (player.Team ~= game.Players.LocalPlayer.Team)
+                if isEnemy and isVisible(head) and isInFOV(head) then
+                    local dist = (head.Position - workspace.CurrentCamera.CFrame.Position).Magnitude
+                    if dist < closestDist then
+                        closestDist = dist
+                        closestHead = head
+                    end
+                end
+            end
+        end
+    end
+
+    return closestHead
+end
+
+-- Right Mouse Click Input Handling
 local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
-
-local localPlayer = Players.LocalPlayer
-local camera = workspace.CurrentCamera
-
 local isHoldingRightClick = false
 
--- Check if teams are used
-local function usesTeams()
-	for _, player in ipairs(Players:GetPlayers()) do
-		if player.Team ~= nil then
-			return true
-		end
-	end
-	return false
-end
-
--- Check if the target part is visible from the camera using a raycast
-local function isVisible(targetPart)
-	local origin = camera.CFrame.Position
-	local direction = (targetPart.Position - origin)
-
-	local raycastParams = RaycastParams.new()
-	raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
-	raycastParams.FilterDescendantsInstances = {localPlayer.Character}
-	raycastParams.IgnoreWater = true
-
-	local result = workspace:Raycast(origin, direction, raycastParams)
-
-	if result and result.Instance:IsDescendantOf(targetPart.Parent) then
-		return true
-	end
-
-	return false
-end
-
--- Check if a part is in the camera's field of view (on screen)
-local function isInFOV(part)
-	local screenPoint, onScreen = camera:WorldToViewportPoint(part.Position)
-	return onScreen
-end
-
--- Find the nearest visible & in-FOV enemy player's head
-local function getNearestPlayerHead()
-	local closestDist = math.huge
-	local closestHead = nil
-	local hasTeams = usesTeams()
-
-	for _, player in pairs(Players:GetPlayers()) do
-		if player ~= localPlayer and player.Character and player.Character:FindFirstChild("Head") then
-			local head = player.Character.Head
-			local humanoid = player.Character:FindFirstChild("Humanoid")
-
-			if humanoid and humanoid.Health > 0 then
-				local isEnemy = not hasTeams or (player.Team ~= localPlayer.Team)
-				if isEnemy and isVisible(head) and isInFOV(head) then
-					local dist = (head.Position - camera.CFrame.Position).Magnitude
-					if dist < closestDist then
-						closestDist = dist
-						closestHead = head
-					end
-				end
-			end
-		end
-	end
-
-	return closestHead
-end
-
--- Input handling
 UserInputService.InputBegan:Connect(function(input, processed)
-	if input.UserInputType == Enum.UserInputType.MouseButton2 then
-		isHoldingRightClick = true
-	end
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then
+        isHoldingRightClick = true
+    end
 end)
 
 UserInputService.InputEnded:Connect(function(input, processed)
-	if input.UserInputType == Enum.UserInputType.MouseButton2 then
-		isHoldingRightClick = false
-	end
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then
+        isHoldingRightClick = false
+    end
 end)
 
--- Aimbot update
-RunService.RenderStepped:Connect(function()
-	if isHoldingRightClick then
-		local targetHead = getNearestPlayerHead()
-		if targetHead then
-			local targetPos = targetHead.Position
-			local camPos = camera.CFrame.Position
-			local newLookVector = (targetPos - camPos).Unit
-			camera.CFrame = CFrame.new(camPos, camPos + newLookVector)
-		end
-	end
+-- Aimbot Camera Update
+game:GetService("RunService").RenderStepped:Connect(function()
+    if IsAimbotOn and isHoldingRightClick then
+        local targetPart = HitPart == "Head" and "Head" or "Torso"
+        local targetHead = getNearestPlayerHead()
+        if targetHead then
+            local targetPos = targetHead.Position
+            local camPos = workspace.CurrentCamera.CFrame.Position
+            local newLookVector = (targetPos - camPos).Unit
+            workspace.CurrentCamera.CFrame = CFrame.new(camPos, camPos + newLookVector)
+        end
+    end
 end)
-		else
-			IsAimbotOn = false
-			print("False")
-			return
-		end
-	end
-})
-
-local Toggle = Tab:CreateToggle({
-	Name = "ESP (Highlight Character)",
-	CurrentValue = false,
-	Flag = "Toggle112341", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-	Callback = function(Value)
-		if Value == true then
-		local function addHighlight(character)
-	if not character or character:FindFirstChild("ESP") then return end
-
-	local highlight = Instance.new("Highlight")
-	highlight.Name = "ESP"
-	highlight.FillColor = Color3.new(1, 0, 0) -- Red fill
-	highlight.OutlineColor = Color3.new(1, 1, 1) -- White outline
-	highlight.FillTransparency = 0.5
-	highlight.OutlineTransparency = 0
-	highlight.Enabled = true
-	highlight.Parent = character
-end
-
--- Function to handle a player's character
-local function setupCharacterTracking(player)
-	if player == localPlayer then return end
-
-	local function onCharacterAdded(character)
-		addHighlight(character)
-
-		local humanoid = character:FindFirstChildOfClass("Humanoid")
-		if humanoid then
-			humanoid.Died:Connect(function()
-				-- Wait a short moment before the respawn (if needed)
-				task.delay(2, function()
-					if player.Character then
-						addHighlight(player.Character)
-					end
-				end)
-			end)
-		end
-	end
-
-	-- Track current character if exists
-	if player.Character then
-		onCharacterAdded(player.Character)
-	end
-
-	-- Listen for future characters
-	player.CharacterAdded:Connect(onCharacterAdded)
-end
-
--- Apply to all existing players
-for _, player in ipairs(Players:GetPlayers()) do
-	setupCharacterTracking(player)
-end
-
--- Handle new players joining
-Players.PlayerAdded:Connect(function(player)
-	setupCharacterTracking(player)
-end)
-
-		elseif Value == false then
-			for _,v in pairs(game.Players:GetPlayers()) do
-				if v.Character and v ~= game.Players.LocalPlayer then
-					if v:FindFirstChild("ESP") then
-						v:FindFirstChild("ESP").Enabled = false
-					end
-				end  
-			end
-		end
-		end
-})
-
-
-
-local Dropdown1 = Tab1:CreateDropdown({
-	Name = "AimBotHitPart",
-	Options = {"Head","Torso"},
-	CurrentOption = {"Torso"},
-	Callback = function(Options)
-		if IsAimbotOn == true then
-			if Options == "Torso" then
-				HitPart = "Torso"
-			elseif Options == "Head" then
-				HitPart = "Head"
-			end
-		end
-	end
-})
-
 
 Rayfield:LoadConfiguration()
